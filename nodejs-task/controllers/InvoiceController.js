@@ -1,5 +1,8 @@
-const InvoiceModel = require("../models/InvoiceModel");
+const mongoose = require("mongoose");
 const { validationResult } = require("express-validator");
+
+const InvoiceModel = require("../models/InvoiceModel");
+const PaymentModel = require("../models/PaymentModel");
 
 // Function to add a new invoice
 exports.addInvoice = async (req, res) => {
@@ -23,62 +26,7 @@ exports.addInvoice = async (req, res) => {
   }
 };
 
-// exports.invoicePayment = async (req, res) => {
-//   // input validation
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).json({ errors: errors.array()[0].msg });
-//   }
-
-//   try {
-//     const { invoiceId, invoiceAmount } = req.body;
-
-//     // before making payment we need to check how much amount is remaining to be paid by the department.
-//     // if user is trying to pay more than what is maximum to be paid should throw an error
-
-//     // fetch invoice
-//     const { invoiceAmount: totalInvoiceAmount, paid } =
-//       await InvoiceModel.findById(invoiceId);
-
-//     const maxPayableAmount = totalInvoiceAmount - paid;
-
-//     if (maxPayableAmount == 0) {
-//       return res.status(503).json({
-//         status: false,
-//         message: "Invoice payment is already completed",
-//       });
-//     }
-
-//     if (invoiceAmount > maxPayableAmount) {
-//       return res.status(500).json({
-//         status: false,
-//         message: `The amount you are trying to pay is more than required! You can pay a maximum amout of ${maxPayableAmount}`,
-//       });
-//     }
-
-//     const updatePayment = await InvoiceModel.updateOne(
-//       { _id: invoiceId },
-//       { $set: { paid: invoiceAmount + paid } }
-//     );
-
-//     if (!updatePayment) {
-//       return res
-//         .status(404)
-//         .json({ status: false, message: "Payment was not successful" });
-//     }
-
-//     res.status(200).json({
-//       status: true,
-//       message: "Payment is successful",
-//       data: updatePayment,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-
-
+// reconciliation api
 exports.invoicePayment = async (req, res) => {
   // Input validation using express-validator
   const errors = validationResult(req);
@@ -88,14 +36,33 @@ exports.invoicePayment = async (req, res) => {
   }
 
   try {
-    // Destructure values from the request body
-    const { invoiceId, invoiceAmount } = req.body;
+    const { invoiceId, amount } = req.body;
 
-    // Fetch the invoice details from the database
-    const { invoiceAmount: totalInvoiceAmount, paid } = await InvoiceModel.findById(invoiceId);
+    const { invoiceAmount } = await InvoiceModel.findById(invoiceId);
 
-    // Calculate the maximum payable amount
-    const maxPayableAmount = totalInvoiceAmount - paid;
+    const allPaymentsSum = await PaymentModel.aggregate([
+      {
+        $match: {
+          invoiceId: new mongoose.Types.ObjectId(invoiceId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalPaymentAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    // return res.json({allPaymentsSum})
+    let totalAmountPaid
+    if (allPaymentsSum[0]) {
+      totalAmountPaid = allPaymentsSum[0].totalPaymentAmount;
+    } else {
+      totalAmountPaid = 0;
+    }
+
+    const maxPayableAmount = invoiceAmount - totalAmountPaid;
 
     // Check if the invoice payment is already completed
     if (maxPayableAmount === 0) {
@@ -106,31 +73,26 @@ exports.invoicePayment = async (req, res) => {
     }
 
     // Check if the payment amount exceeds the maximum payable amount
-    if (invoiceAmount > maxPayableAmount) {
+    if (amount > maxPayableAmount) {
       return res.status(500).json({
         status: false,
         message: `The amount you are trying to pay is more than required! You can pay a maximum amount of ${maxPayableAmount}`,
       });
     }
 
-    // Update the payment in the database
-    const updatePayment = await InvoiceModel.updateOne(
-      { _id: invoiceId },
-      { $set: { paid: invoiceAmount + paid } }
-    );
+    const payment = new PaymentModel(req.body);
+    await payment.save();
 
-    // Check if the payment update was successful
-    if (!updatePayment) {
+    if (!payment) {
       return res
         .status(404)
         .json({ status: false, message: "Payment was not successful" });
     }
 
-    // Return a successful response with payment details
     res.status(200).json({
       status: true,
       message: "Payment is successful",
-      data: updatePayment,
+      data: payment,
     });
   } catch (error) {
     // Handle unexpected errors
@@ -138,3 +100,4 @@ exports.invoicePayment = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+

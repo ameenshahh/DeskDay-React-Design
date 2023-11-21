@@ -17,11 +17,6 @@ const InvoiceSchema = new mongoose.Schema(
       ref: "Vendor",
       required: true,
     },
-
-    paid: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );

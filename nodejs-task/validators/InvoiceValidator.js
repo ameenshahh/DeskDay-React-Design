@@ -16,7 +16,7 @@ exports.addInvoiceValidator = [
 
 exports.invoicePaymentValidator = [
   body("invoiceId").notEmpty().withMessage("invoice id is required"),
-  body("invoiceAmount")
+  body("amount")
     .notEmpty()
     .withMessage("invoiceAmount is required")
     .isNumeric()
