@@ -5,11 +5,17 @@ import "./App.css";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import { Box } from "@mui/material";
-
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
-      <Box className="App">
+      <Box
+        className="App"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+        }}
+      >
         <Header />
         <Body />
       </Box>

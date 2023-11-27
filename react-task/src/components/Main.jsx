@@ -1,28 +1,50 @@
+import { Box, Button, Stack } from "@mui/material";
 import React from "react";
-import { Avatar, Box, Stack, Typography } from "@mui/material";
 import ScheduleList from "./ScheduleList";
 
-const Main = () => {
+const Main = ({ selectedAssignees }) => {
   return (
     <Box
       flex={4}
       sx={{
-        // backgroundColor: "#e0e0e0",
-        // height:"100%"
-        
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
-      <Stack justifyContent={"space-between"} sx={{ overflowY: "auto", maxHeight: "600px" }}>
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <ScheduleList />
-        <Box>Cancel & Save</Box>
-      </Stack>
+      <Box
+        flex={3}
+        sx={{
+          overflow: "auto",
+        }}
+      >
+        {selectedAssignees.map((assignee) => {
+          return <ScheduleList key={assignee.index} assignee={assignee} />;
+        })}
+      </Box>
+
+      {selectedAssignees.length > 0 && (
+        <Box
+          sx={{
+            height: "70px",
+            border: "1px solid #e0e0e0",
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <Stack
+            spacing={2}
+            direction={"row"}
+            sx={{
+              marginRight: 2,
+            }}
+          >
+            <Button variant="outlined">Cancel</Button>
+            <Button variant="contained">Save</Button>
+          </Stack>
+        </Box>
+      )}
     </Box>
   );
 };

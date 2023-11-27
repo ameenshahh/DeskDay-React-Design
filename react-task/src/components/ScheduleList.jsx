@@ -1,10 +1,9 @@
-import React from "react";
-import { Avatar, Box, Stack, TextField, Typography } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
-import { DateTimePicker } from "@mui/x-date-pickers";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Avatar, Box, InputBase, Stack, Typography } from "@mui/material";
+import React from "react";
 
-const ScheduleList = () => {
+const ScheduleList = ({ assignee }) => {
   return (
     <Box
       p={2}
@@ -12,88 +11,63 @@ const ScheduleList = () => {
         borderBottom: "2px solid #e0e0e0",
       }}
     >
-      <Box
-        sx={{
-          // boxShadow: "1px 1px 1px rgba(0.10, 0.10, 0.10, 0.10)",
-          // borderRadius: 2,
-          padding: 2,
-          // borderBottom: "2px solid #e0e0e0",
-        }}
-      >
+      <Box>
         <Stack direction={"row"} justifyContent={"space-between"}>
-          <Stack direction={"row"} alignItems={"center"}>
-            <Avatar sx={{ margin: 1 }} />
-            <Typography>Name</Typography>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            sx={{ marginBottom: 2 }}
+          >
+            <Avatar sx={{ marginRight: 1 }} />
+            <Typography>{assignee.name}</Typography>
           </Stack>
           <DeleteOutlineIcon />
         </Stack>
         <Stack
-          // p={1}
           direction={"row"}
           justifyContent={"space-between"}
           alignItems={"center"}
         >
           <Stack direction={"row"} spacing={1}>
-            {/* <fieldset>
-              <legend><b>Start Date & Time</b></legend>
-              <input type="datetime" name="" id="" />
-            </fieldset> */}
-            <fieldset style={{ padding: "10px" }}>
+            <fieldset
+              style={{
+                padding: "10px",
+                borderRadius: "10px",
+                borderWidth: "1px",
+              }}
+            >
               <legend>
                 <b>Start Date & Time</b>
               </legend>
-              <TextField
-                type="datetime-local"
-                variant="outlined"
+              <InputBase
+                type="datetime"
+                placeholder="DD/MM/YY"
                 sx={{
-                  width: "200px", // Set your desired width
-                  height: "30px", // Set your desired height
-                  "& .MuiOutlinedInput-root": {
-                    border: "none", // Remove input field border
-                  },
-                  "& .MuiInputBase-input": {
-                    padding: "5px", // Add padding if needed
-                    outline: "none", // Remove input field outline
-                    // boxSizing: "border-box", // Include padding and border in the total width and height
-                  },
-                  border:"none"
+                  width: "200px",
+                  height: "30px",
                 }}
               />
             </fieldset>
-            <fieldset style={{ padding: "10px" }}>
+            <fieldset
+              style={{
+                padding: "10px",
+                borderRadius: "10px",
+                borderWidth: "1px",
+              }}
+            >
               <legend>
                 <b>Start Date & Time</b>
               </legend>
-              <TextField
-                type="datetime-local"
+              <InputBase
+                type="datetime"
+                placeholder="DD/MM/YY"
                 variant="outlined"
                 sx={{
-                  width: "200px", // Set your desired width
-                  height: "30px", // Set your desired height
-                  "& .MuiOutlinedInput-root": {
-                    border: "none", // Remove input field border
-                  },
-                  "& .MuiInputBase-input": {
-                    padding: "5px", // Add padding if needed
-                    outline: "none", // Remove input field outline
-                    // boxSizing: "border-box", // Include padding and border in the total width and height
-                  },
-                  border:"none"
+                  width: "200px",
+                  height: "30px",
                 }}
               />
             </fieldset>
-
-            {/* <DateTimePicker
-              label="Start Date & Time"
-              // InputLabelProps={{
-              //   style: {
-              //     // position: "absolute",
-              //   },
-              // }}
-              renderInput={(props) => <TextField {...props} />}
-              sx={{ borderRadius: 2 }}
-            /> */}
-            {/* <DateTimePicker label="End Date & Time" /> */}
           </Stack>
           <Box
             sx={{

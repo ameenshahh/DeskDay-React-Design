@@ -1,29 +1,26 @@
-import React, { useState } from "react";
-import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { faker } from "@faker-js/faker";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Avatar, Stack, Typography } from "@mui/material";
+import React from "react";
 
-const AssigneeList = () => {
-  const [selected, setSelected] = useState(false);
+const AssigneeList = ({ index, assignee, selected, assigneeClickHandler }) => {
   const fakeAvatar = faker.image.avatarLegacy();
-  const fakeName = faker.person.fullName();
-
-  const selectAssigneeHandler = () => {
-    setSelected(!selected)
-  };
 
   return (
     <Stack
       direction={"row"}
       justifyContent={"space-between"}
       alignItems={"center"}
-      onClick={selectAssigneeHandler}
+      sx={{
+        backgroundColor: selected ? "#f6fef6" : "",
+      }}
+      onClick={() => assigneeClickHandler(index)}
     >
       <Stack direction={"row"} alignItems={"center"}>
         <Avatar src={fakeAvatar} sx={{ margin: 1 }} />
-        <Typography>{fakeName}</Typography>
+        <Typography>{assignee.name}</Typography>
       </Stack>
-      {selected && <CheckCircleIcon />}
+      {selected && <CheckCircleIcon color={"success"} />}
     </Stack>
   );
 };

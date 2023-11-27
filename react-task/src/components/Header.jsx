@@ -1,7 +1,6 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import { Stack } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { Box, Stack, Typography } from "@mui/material";
+import React from "react";
 
 const Header = () => {
   return (
